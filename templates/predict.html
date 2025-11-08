@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoSense - Predict Pollution</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='eco-styles.css') }}">
+  <style>
+    body {
+      background: linear-gradient(135deg, var(--color-ocean-blue), var(--color-sky-blue));
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: var(--space-md);
+    }
+    
+    .upload-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-xl);
+      max-width: 600px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+      animation: fadeIn 1s ease;
+    }
+    
+    .upload-title {
+      color: var(--color-forest-green);
+      margin-bottom: var(--space-lg);
+      position: relative;
+    }
+    
+    .upload-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(to right, var(--color-forest-green), var(--color-teal));
+      border-radius: var(--border-radius-pill);
+    }
+    
+    .upload-description {
+      margin-bottom: var(--space-xl);
+      color: var(--color-dark);
+    }
+    
+    .upload-area {
+      border: 2px dashed var(--color-light-blue);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-lg);
+      transition: all var(--transition-medium);
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .upload-area:hover {
+      border-color: var(--color-ocean-blue);
+      background-color: rgba(var(--color-light-blue), 0.05);
+    }
+    
+    .upload-area.active {
+      border-color: var(--color-forest-green);
+      background-color: rgba(var(--color-light-green), 0.1);
+    }
+    
+    .upload-icon {
+      font-size: 3rem;
+      color: var(--color-ocean-blue);
+      margin-bottom: var(--space-md);
+    }
+    
+    .upload-text {
+      color: var(--color-dark);
+      margin-bottom: var(--space-sm);
+    }
+    
+    .upload-hint {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    
+    .preview-container {
+      margin: var(--space-lg) 0;
+      position: relative;
+      display: none;
+    }
+    
+    #preview {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .preview-overlay {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transform: translate(50%, -50%);
+    }
+    
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    
+    .navigation-links {
+      display: flex;
+      justify-content: space-between;
+      margin-top: var(--space-lg);
+    }
+    
+    .back-link {
+      color: var(--color-dark);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      transition: color var(--transition-fast);
+    }
+    
+    .back-link:hover {
+      color: var(--color-forest-green);
+    }
+    
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+    }
+    
+    .pollution-type-indicator {
+      display: inline-block;
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--border-radius-pill);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+    }
+    
+    .air-type {
+      background-color: var(--color-light-blue);
+      color: white;
+    }
+    
+    .water-type {
+      background-color: var(--color-teal);
+      color: white;
+    }
+    
+    .loading-indicator {
+      display: none;
+      margin: var(--space-md) auto;
+      text-align: center;
+    }
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--color-forest-green);
+      animation: spin 1s ease-in-out infinite;
+      margin: 0 auto var(--space-sm);
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="upload-container fade-in">
+    <h2 id="pageTitle" class="upload-title">Pollution Prediction</h2>
+    <div id="pollutionTypeIndicator" class="pollution-type-indicator"></div>
+    
+    <p class="upload-description">Upload an image to analyze pollution levels using our advanced AI model.</p>
+    
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">📷</div>
+        <p class="upload-text">Drag and drop an image or click to browse</p>
+        <p class="upload-hint">Supported formats: JPG, PNG, JPEG</p>
+        <input type="file" id="fileInput" name="file" accept="image/*" onchange="handleFileSelect(event)">
+      </div>
+      
+      <div class="preview-container" id="previewContainer">
+        <img id="preview" src="#" alt="Preview">
+        <div class="preview-overlay" onclick="removeImage()">✕</div>
+      </div>
+      
+      <div class="loading-indicator" id="loadingIndicator">
+        <div class="loading-spinner"></div>
+        <p>Analyzing image...</p>
+      </div>
+      
+      <div class="action-buttons">
+        <button type="submit" class="btn btn-lg btn-primary" id="submitBtn" disabled>Analyze Pollution</button>
+      </div>
+      
+      <div class="navigation-links">
+        <a href="{{ url_for('select') }}" class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+          </svg>
+          Back to Selection
+        </a>
+        <a href="{{ url_for('landing') }}" class="back-link">
+          Home
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="transform: rotate(180deg); margin-left: 5px;">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+          </svg>
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <script src="{{ url_for('static', filename='eco-animations.js') }}"></script>
+  <script>
+    // Get pollution type from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const pollutionType = urlParams.get('type');
+    const pollutionTypeIndicator = document.getElementById('pollutionTypeIndicator');
+    
+    // Update page title and indicator based on pollution type
+    if (pollutionType) {
+      const formattedType = pollutionType.charAt(0).toUpperCase() + pollutionType.slice(1);
+      document.getElementById('pageTitle').innerText = formattedType + ' Pollution Prediction';
+      
+      pollutionTypeIndicator.innerText = formattedType + ' Pollution Analysis';
+      pollutionTypeIndicator.classList.add(pollutionType + '-type');
+    }
+    
+    // Handle file selection
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        displayPreview(file);
+        document.getElementById('uploadArea').classList.add('active');
+        document.getElementById('submitBtn').disabled = false;
+      }
+    }
+    
+    // Display image preview
+    function displayPreview(file) {
+      const preview = document.getElementById('preview');
+      const previewContainer = document.getElementById('previewContainer');
+      
+      preview.src = URL.createObjectURL(file);
+      previewContainer.style.display = 'block';
+    }
+    
+    // Remove selected image
+    function removeImage() {
+      const fileInput = document.getElementById('fileInput');
+      const previewContainer = document.getElementById('previewContainer');
+      const uploadArea = document.getElementById('uploadArea');
+      
+      fileInput.value = '';
+      previewContainer.style.display = 'none';
+      uploadArea.classList.remove('active');
+      document.getElementById('submitBtn').disabled = true;
+    }
+    
+    // Handle form submission
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+      const fileInput = document.getElementById('fileInput');
+      
+      if (!fileInput.files.length) {
+        e.preventDefault();
+        alert('Please select an image to analyze.');
+        return;
+      }
+      
+      document.getElementById('loadingIndicator').style.display = 'block';
+      document.getElementById('submitBtn').disabled = true;
+    });
+    
+    // Drag and drop functionality
+    const uploadArea = document.getElementById('uploadArea');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+      uploadArea.classList.add('active');
+    }
+    
+    function unhighlight() {
+      uploadArea.classList.remove('active');
+    }
+    
+    uploadArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const file = dt.files[0];
+      
+      if (file && file.type.startsWith('image/')) {
+        document.getElementById('fileInput').files = dt.files;
+        displayPreview(file);
+        document.getElementById('submitBtn').disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>

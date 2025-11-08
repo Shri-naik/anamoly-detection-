@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSense - Analysis Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='eco-styles.css') }}">
+    <style>
+        body {
+            background: linear-gradient(135deg, var(--color-forest-green-light), var(--color-ocean-blue));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-md);
+        }
+        
+        .result-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--border-radius-lg);
+            padding: var(--space-xl);
+            max-width: 800px;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+            animation: fadeIn 1s ease;
+        }
+        
+        .result-header {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .result-title {
+            color: var(--color-forest-green);
+            margin-bottom: var(--space-sm);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .result-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, var(--color-forest-green), var(--color-teal));
+            border-radius: var(--border-radius-pill);
+        }
+        
+        .result-subtitle {
+            color: var(--color-dark);
+            font-weight: 400;
+            margin-top: var(--space-md);
+        }
+        
+        .result-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+        }
+        
+        @media (max-width: 768px) {
+            .result-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .image-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .uploaded-image {
+            width: 100%;
+            max-width: 400px;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-medium);
+        }
+        
+        .uploaded-image:hover {
+            transform: scale(1.02);
+        }
+        
+        .data-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .prediction-box {
+            padding: var(--space-md);
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--space-md);
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-fast);
+        }
+        
+        .prediction-box:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .Low {
+            background-color: var(--color-light-blue);
+            color: white;
+        }
+        
+        .Medium {
+            background-color: var(--color-amber);
+            color: var(--color-dark);
+        }
+        
+        .High {
+            background-color: var(--color-coral);
+            color: white;
+        }
+        
+        .section-title {
+            color: var(--color-forest-green);
+            margin-top: var(--space-md);
+            margin-bottom: var(--space-sm);
+            font-size: 1.2rem;
+            position: relative;
+            padding-left: var(--space-md);
+        }
+        
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 20px;
+            background: var(--color-forest-green);
+            border-radius: var(--border-radius-pill);
+        }
+        
+        .data-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 var(--space-md) 0;
+        }
+        
+        .probability, .analysis {
+            padding: var(--space-sm);
+            margin-bottom: var(--space-xs);
+            border-radius: var(--border-radius-sm);
+            background-color: var(--color-light-gray);
+            display: flex;
+            justify-content: space-between;
+            transition: transform var(--transition-fast), background-color var(--transition-fast);
+        }
+        
+        .probability:hover, .analysis:hover {
+            transform: translateX(5px);
+            background-color: var(--color-light-green);
+        }
+        
+        .probability-bar {
+            height: 8px;
+            background-color: var(--color-light-gray);
+            border-radius: var(--border-radius-pill);
+            margin-top: var(--space-xs);
+            overflow: hidden;
+        }
+        
+        .probability-fill {
+            height: 100%;
+            border-radius: var(--border-radius-pill);
+            background: linear-gradient(to right, var(--color-teal), var(--color-forest-green));
+            transition: width 1s ease-out;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-md);
+            margin-top: var(--space-xl);
+            flex-wrap: wrap;
+        }
+        
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--border-radius-pill);
+            text-decoration: none;
+            color: var(--color-dark);
+            background-color: var(--color-light-gray);
+            transition: all var(--transition-fast);
+        }
+        
+        .nav-link:hover {
+            background-color: var(--color-forest-green);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .nav-link svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+        }
+        
+        .recommendations {
+            margin-top: var(--space-lg);
+            padding: var(--space-md);
+            border-radius: var(--border-radius-md);
+            background-color: var(--color-light-green);
+            border-left: 4px solid var(--color-forest-green);
+        }
+        
+        .recommendations-title {
+            color: var(--color-forest-green);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .recommendations-text {
+            color: var(--color-dark);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container fade-in">
+        <div class="result-header">
+            <h1 class="result-title">Analysis Results</h1>
+            <p class="result-subtitle">Here's what we found in your uploaded image</p>
+        </div>
+        
+        <div class="result-content">
+            <div class="image-section">
+                <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Uploaded Image" class="uploaded-image">
+                
+                <div class="prediction-box {{ class_name }} slide-up" style="width: 100%; margin-top: var(--space-md);">
+                    <strong>{{ prediction }}</strong>
+                </div>
+            </div>
+            
+            <div class="data-section slide-in-right">
+                <h3 class="section-title">Class Probabilities</h3>
+                <ul class="data-list">
+                    {% for label, value in probs.items() %}
+                        <li class="probability">
+                            <span>{{ label }}</span>
+                            <span>{{ value | round(2) }}%</span>
+                            <div class="probability-bar">
+                                <div class="probability-fill" style="width: {{ value }}%"></div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3 class="section-title">Detailed Analysis</h3>
+                <ul class="data-list">
+                    {% for item in analysis %}
+                        <li class="analysis">{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="recommendations">
+                    <h4 class="recommendations-title">Environmental Recommendations</h4>
+                    <p class="recommendations-text">
+                        {% if class_name == 'Low' %}
+                            The pollution level is low. Continue monitoring and maintaining current environmental practices.
+                        {% elif class_name == 'Medium' %}
+                            Medium pollution detected. Consider implementing additional filtration or treatment methods to improve environmental quality.
+                        {% elif class_name == 'High' %}
+                            High pollution levels detected! Immediate action is recommended to address the source of pollution and implement remediation strategies.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <a href="{{ url_for('predict', type='water') }}" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                </svg>
+                Try Again
+            </a>
+            <a href="{{ url_for('select') }}" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+                Back to Selection
+            </a>
+            <a href="{{ url_for('landing') }}" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                Home
+            </a>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='eco-animations.js') }}"></script>
+    <script>
+        // Animate probability bars on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animation classes
+            document.querySelectorAll('.probability').forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.add('fade-in');
+                }, 300 + (index * 100));
+            });
+            
+            document.querySelectorAll('.analysis').forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.add('fade-in');
+                }, 800 + (index * 100));
+            });
+            
+            // Add recommendation animation
+            setTimeout(() => {
+                document.querySelector('.recommendations').classList.add('slide-up');
+            }, 1200);
+        });
+    </script>
+</body>
+</html>

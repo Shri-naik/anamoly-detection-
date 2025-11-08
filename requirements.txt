@@ -1,0 +1,22 @@
+# Core ML stack
+numpy
+pandas
+scikit-learn
+opencv-python
+matplotlib
+seaborn
+albumentations
+tqdm
+
+# Deep Learning
+tensorflow>=2.10,<2.14  # stable range for Python 3.10
+
+# Web framework (Flask UI)
+Flask>=2.0
+
+# Streamlit for deployment
+streamlit>=1.28.0
+plotly>=5.0.0
+
+# Optional but useful
+Pillow

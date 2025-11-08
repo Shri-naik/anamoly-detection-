@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ecovision"
+version = "1.0.0"
+description = "AI-powered environmental monitoring system"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+dependencies = [
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "opencv-python",
+    "matplotlib",
+    "seaborn",
+    "albumentations",
+    "tqdm",
+    "tensorflow>=2.10,<2.14",
+    "streamlit>=1.28.0",
+    "plotly>=5.0.0",
+    "Pillow",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/ecovision"
+Repository = "https://github.com/yourusername/ecovision"
+Issues = "https://github.com/yourusername/ecovision/issues"
+
+[project.scripts]
+ecovision = "streamlit_app:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.streamlit]
+# Streamlit configuration
+server.port = 8501
+server.address = "localhost"
+browser.serverAddress = "localhost"
+runner.fastReruns = true
+
+# Theme configuration
+theme.primaryColor = "#2E8B57"
+theme.backgroundColor = "#FFFFFF"
+theme.secondaryBackgroundColor = "#F0F8FF"
+theme.textColor = "#262730"
+font = "sans serif"

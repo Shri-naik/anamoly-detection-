@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoSense - Choose Pollution Type</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='eco-styles.css') }}">
+  <style>
+    body {
+      background: linear-gradient(135deg, var(--color-light-green), var(--color-light-blue));
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .selection-container {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-lg);
+      max-width: 700px;
+      width: 90%;
+      text-align: center;
+      animation: fadeIn 1s ease;
+    }
+    
+    .selection-title {
+      color: var(--color-forest-green);
+      margin-bottom: var(--space-xl);
+      position: relative;
+    }
+    
+    .selection-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(to right, var(--color-forest-green), var(--color-teal));
+      border-radius: var(--border-radius-pill);
+    }
+    
+    .selection-description {
+      margin-bottom: var(--space-xl);
+      color: var(--color-dark);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .option-cards {
+      display: flex;
+      gap: var(--space-lg);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .option-card {
+      flex: 1;
+      min-width: 200px;
+      background: white;
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+      cursor: pointer;
+    }
+    
+    .option-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-xl);
+    }
+    
+    .option-header {
+      padding: var(--space-lg);
+      text-align: center;
+    }
+    
+    .option-icon {
+      font-size: 3rem;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .air-option .option-header {
+      background: linear-gradient(135deg, var(--color-ocean-blue), var(--color-sky-blue));
+      color: white;
+    }
+    
+    .water-option .option-header {
+      background: linear-gradient(135deg, var(--color-forest-green), var(--color-teal));
+      color: white;
+    }
+    
+    .option-body {
+      padding: var(--space-lg);
+    }
+    
+    .option-title {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .option-description {
+      color: #666;
+      margin-bottom: var(--space-md);
+    }
+    
+    .back-link {
+      margin-top: var(--space-xl);
+      display: inline-block;
+      color: var(--color-dark);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+    
+    .back-link:hover {
+      color: var(--color-forest-green);
+    }
+    
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="selection-container fade-in">
+    <h2 class="selection-title">Select Pollution Type</h2>
+    <p class="selection-description">Choose the type of pollution you want to analyze. Our advanced AI models will help identify and classify pollution levels.</p>
+    
+    <div class="option-cards">
+      <div class="option-card air-option scale-in" onclick="location.href='{{ url_for('predict') }}?type=air'">
+        <div class="option-header">
+          <div class="option-icon">🌬️</div>
+        </div>
+        <div class="option-body">
+          <h3 class="option-title">Air Pollution</h3>
+          <p class="option-description">Analyze air quality and identify pollution levels from images.</p>
+          <button class="btn btn-secondary">Select</button>
+        </div>
+      </div>
+      
+      <div class="option-card water-option scale-in" onclick="location.href='{{ url_for('predict') }}?type=water'">
+        <div class="option-header">
+          <div class="option-icon">💧</div>
+        </div>
+        <div class="option-body">
+          <h3 class="option-title">Water Pollution</h3>
+          <p class="option-description">Detect and classify water pollution from uploaded images.</p>
+          <button class="btn btn-primary">Select</button>
+        </div>
+      </div>
+    </div>
+    
+    <a href="{{ url_for('landing') }}" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+      </svg>
+      Back to Home
+    </a>
+  </div>
+  
+  <script src="{{ url_for('static', filename='eco-animations.js') }}"></script>
+</body>
+</html>
