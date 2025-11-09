@@ -1,5 +1,5 @@
 # Core ML stack
-numpy==1.24.3
+numpy>=1.23.3
 pandas
 scikit-learn
 opencv-python
@@ -9,6 +9,9 @@ albumentations
 tqdm
 h5py==3.11.0
 protobuf==3.20.3
+pip==24.0
+setuptools>=68.0
+wheel
 
 # Deep Learning
 # Pin TF to a version with Linux wheels for Python 3.11
