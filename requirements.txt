@@ -1,5 +1,5 @@
 # Core ML stack
-numpy
+numpy==1.24.3
 pandas
 scikit-learn
 opencv-python
@@ -9,7 +9,8 @@ albumentations
 tqdm
 
 # Deep Learning
-tensorflow>=2.10,<2.14  # stable range for Python 3.10
+# Pin TF to a version with Linux wheels for Python 3.11
+tensorflow==2.13.0
 
 # Web framework (Flask UI)
 Flask>=2.0
