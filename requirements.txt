@@ -1,4 +1,5 @@
 # Core ML stack
+<<<<<<< HEAD
 numpy>=1.23.3
 pandas
 scikit-learn
@@ -6,6 +7,16 @@ opencv-python
 matplotlib
 seaborn
 albumentations
+=======
+numpy==1.24.3
+pandas==2.0.3
+scikit-learn==1.3.2
+opencv-python-headless==4.8.0.74
+matplotlib==3.7.3
+seaborn==0.12.2
+albumentations==1.3.1
+scipy==1.10.1
+>>>>>>> 0e9e741 (Streamlit Cloud fix: headless OpenCV, scipy, TF CPU; pins for Py3.11)
 tqdm
 h5py==3.11.0
 protobuf==3.20.3
@@ -14,8 +25,8 @@ setuptools>=68.0
 wheel
 
 # Deep Learning
-# Pin TF to a version with Linux wheels for Python 3.11
-tensorflow==2.13.0
+# Use CPU-only TF with Linux wheels for Python 3.11
+tensorflow-cpu==2.13.0
 
 # Web framework (Flask UI)
 Flask>=2.0
@@ -25,4 +36,4 @@ streamlit>=1.28.0
 plotly>=5.0.0
 
 # Optional but useful
-Pillow
+Pillow==9.5.0
