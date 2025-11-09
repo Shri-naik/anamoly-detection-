@@ -29,6 +29,8 @@ dependencies = [
     "seaborn",
     "albumentations",
     "tqdm",
+    "h5py==3.11.0",
+    "protobuf==3.20.3",
     "tensorflow==2.13.0",
     "streamlit>=1.28.0",
     "plotly>=5.0.0",

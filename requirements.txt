@@ -7,6 +7,8 @@ matplotlib
 seaborn
 albumentations
 tqdm
+h5py==3.11.0
+protobuf==3.20.3
 
 # Deep Learning
 # Pin TF to a version with Linux wheels for Python 3.11
